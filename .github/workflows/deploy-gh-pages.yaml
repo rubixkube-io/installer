@@ -3,7 +3,7 @@ name: Deploy to gh-pages
 on:
   push:
     branches:
-      - main  # Trigger workflow on changes to the main branch
+      - main
 
 jobs:
   deploy:
@@ -13,19 +13,25 @@ jobs:
     - name: Checkout the code
       uses: actions/checkout@v3
 
-    - name: Setup Node.js (if needed for your UI builds)
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-
-    - name: Create gh-pages branch for manifests
+    - name: Switch to gh-pages
       run: |
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "github-actions@users.noreply.github.com"
+        git fetch origin gh-pages || echo "No gh-pages branch exists yet"
         git checkout gh-pages || git checkout --orphan gh-pages
-        git rm -rf .
-        cp -r manifests/* .
-        echo "Generated manifests" > README.md
+
+    - name: Clean up gh-pages
+      run: |
+        find . -not -name '.git' -not -name 'README.md' -exec rm -rf {} +
+
+    - name: Copy manifests to gh-pages
+      run: |
+        git checkout main -- manifests # Copy manifests folder from the main branch
+        mv manifests/* . # Move manifests to the root
+        rm -rf manifests # Clean up
+
+    - name: Commit and Push Changes
+      run: |
         git add .
-        git commit -m "Deploy manifests to gh-pages" || echo "No changes to commit"
+        git commit -m "Deploy manifests to gh-pages" || echo "Nothing to commit"
         git push origin gh-pages --force
