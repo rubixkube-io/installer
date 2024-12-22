@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: console
+  labels:
+    app: console
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: console
+  template:
+    metadata:
+      labels:
+        app: console
+    spec:
+      containers:
+      - name: ui
+        image: nginx:latest # Replace with your UI image
+        ports:
+        - containerPort: 3000
+        env:
+        - name: API_SERVER_URL
+          value: "http://api-server.default.svc.cluster.local" # Replace with your API server URL
+      - name: apiserver
+        image: my-api-server:latest # Replace with your API server image
+        ports:
+        - containerPort: 8080

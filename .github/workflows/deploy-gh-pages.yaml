@@ -1,0 +1,37 @@
+name: Deploy to gh-pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Switch to gh-pages
+      run: |
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "github-actions@users.noreply.github.com"
+        git fetch origin gh-pages || echo "No gh-pages branch exists yet"
+        git checkout gh-pages || git checkout --orphan gh-pages
+
+    - name: Clean up gh-pages
+      run: |
+        find * -not -name '.git' -not -name 'README.md' -exec rm -rf {} +
+
+    - name: Copy manifests to gh-pages
+      run: |
+        git checkout main -- manifests # Copy manifests folder from the main branch
+        mv manifests/* . # Move manifests to the root
+        rm -rf manifests # Clean up
+
+    - name: Commit and Push Changes
+      run: |
+        git add .
+        git commit -m "Deploy manifests to gh-pages" || echo "Nothing to commit"
+        git push origin gh-pages --force
