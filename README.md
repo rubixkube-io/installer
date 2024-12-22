@@ -1,0 +1,2 @@
+# installer
+Rubixkube Installer manifests
