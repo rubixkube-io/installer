@@ -16,7 +16,7 @@ jobs:
     - name: Combine All Manifests Dynamically
       run: |
         mkdir -p combined
-        cat manifests/*.yaml > combined/all.yaml
+        cat manifests/*.yaml > combined/installer.yaml
 
     - name: Deploy to gh-pages
       run: |
@@ -25,7 +25,7 @@ jobs:
         git fetch origin gh-pages || echo "No gh-pages branch exists yet"
         git checkout gh-pages || git checkout --orphan gh-pages
         git rm -rf .
-        mv combined/all.yaml .
+        mv combined/installer.yaml .
         rm -rf combined
         git add .
         git commit -m "Deploy combined manifest to gh-pages" || echo "Nothing to commit"
