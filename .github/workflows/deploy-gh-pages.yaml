@@ -22,7 +22,7 @@ jobs:
 
     - name: Clean up gh-pages
       run: |
-        find . -not -name '.git' -not -name 'README.md' -exec rm -rf {} +
+        find * -not -name '.git' -not -name 'README.md' -exec rm -rf {} +
 
     - name: Copy manifests to gh-pages
       run: |
