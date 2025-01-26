@@ -26,3 +26,4 @@ spec:
         image: my-api-server:latest # Replace with your API server image
         ports:
         - containerPort: 8080
+---
